@@ -1,103 +1,59 @@
 <?php
 $action = $_POST['action'];
-$inputNumber = $_POST['inputNumber'];
+$number = $_POST['number'];
+
+if (!is_numeric($number)) {
+  echo "Error: Input harus berupa angka!";
+  exit;
+}
 
 if ($action === 'generateTriangle') {
+  $triangle = '';
+  $digits = str_split($number);
+  $rowCount = count($digits);
   
-  if (!is_numeric($inputNumber) || $inputNumber <= 0 || !is_int((int)$inputNumber)) {
-    http_response_code(400);
-    echo json_encode(array('error' => 'Masukkan angka positif yang valid.'));
-    return;
+  for ($i = 0; $i < $rowCount; $i++) {
+    $row = '';
+    for ($j = 0; $j <= $i; $j++) {
+      $row .= $digits[$i];
+    }
+    $triangle .= $row . "<br>";
   }
-
-  
-  $triangle = generateTriangle($inputNumber);
-
   
   echo $triangle;
 } elseif ($action === 'generateOddNumbers') {
-  
-  if (!is_numeric($inputNumber) || $inputNumber <= 0 || !is_int((int)$inputNumber)) {
-    http_response_code(400);
-    echo json_encode(array('error' => 'Masukkan angka positif yang valid.'));
-    return;
+  $oddNumbers = '';
+  for ($i = 1; $i <= $number; $i++) {
+    if ($i % 2 !== 0) {
+      $oddNumbers .= $i . ' ';
+    }
   }
-
-  
-  $oddNumbers = generateOddNumbers($inputNumber);
-
- 
   echo $oddNumbers;
 } elseif ($action === 'generatePrimeNumbers') {
+  $primeNumbers = '';
   
-  if (!is_numeric($inputNumber) || $inputNumber <= 0 || !is_int((int)$inputNumber)) {
-    http_response_code(400);
-    echo json_encode(array('error' => 'Masukkan angka positif yang valid.'));
-    return;
+  for ($i = 2; $i <= $number; $i++) {
+    if (isPrime($i)) {
+      $primeNumbers .= $i . ' ';
+    }
   }
-
-  
-  $primeNumbers = generatePrimeNumbers($inputNumber);
-
   
   echo $primeNumbers;
+} else {
+  echo "Error: Action tidak valid!";
+  exit;
 }
 
-
-function generateTriangle($inputNumber) {
-  $triangle = '';
-  $number = 10;
-
-  for ($i = 1; $i <= $inputNumber; $i++) {
-    $triangle .= str_pad($number, $i, '0') . '<br>';
-    $number *= 10;
-  }
-
-  return $triangle;
-}
-
-
-function generateOddNumbers($inputNumber) {
-  $oddNumbers = '';
-
-  for ($i = 1; $i <= $inputNumber; $i++) {
-    if ($i % 2 !== 0) {
-      $oddNumbers .= $i . ', ';
-    }
-  }
-
-  $oddNumbers = rtrim($oddNumbers, ', ');
-
-  return $oddNumbers;
-}
-
-
-function generatePrimeNumbers($inputNumber) {
-  $primeNumbers = '';
-
-  for ($i = 2; $i <= $inputNumber; $i++) {
-    if (isPrime($i)) {
-      $primeNumbers .= $i . ', ';
-    }
-  }
-
-
-  $primeNumbers = rtrim($primeNumbers, ', ');
-
-  return $primeNumbers;
-}
-
-
-function isPrime($number) {
-  if ($number < 2) {
+function isPrime($num) {
+  if ($num <= 1) {
     return false;
   }
-
-  for ($i = 2; $i <= sqrt($number); $i++) {
-    if ($number % $i === 0) {
+  
+  for ($i = 2; $i * $i <= $num; $i++) {
+    if ($num % $i === 0) {
       return false;
     }
   }
-
-  return true;
+  
+  return true;
 }
