@@ -9,54 +9,47 @@
   <form id="generateForm">
    
     <tr>
-      <td> <input type="number" id="inputNumber" name="inputNumber" min="1" placeholder="Input Angka"></td>
+      <td> <input type="text" id="numberInput" placeholder="Input Angka"/></td>
     </tr>
     <tr>
-      <td> <button type="submit" id="generateTriangle">Generate Segitiga</button></td>
-      <td><button type="submit" id="generateOddNumbers">Generate Bilangan Ganjil</button></td>
-      <td> <button type="submit" id="generatePrimeNumbers">Generate Bilangan Prima</button></td>
+    <td><button type="button" onclick="executeAction('generateTriangle')">Generate Segitiga</button></td>
+    <td><button type="button" onclick="executeAction('generateOddNumbers')">Generate Bilangan Ganjil</button></td>
+   <td> <button type="button" onclick="executeAction('generatePrimeNumbers')">Generate Bilangan Prima</button></td>
     </tr>
-   
     
-   
-   
   </form>
  </table>
   <div id="result"></div>
 
   <script>
-    $(document).ready(function() {
-      $('#generateForm').submit(function(event) {
-        event.preventDefault();
+    function validateNumber() {
+  var input = document.getElementById("numberInput").value;
+  if (isNaN(input)) {
+    alert("Input harus berupa angka!");
+    return false;
+  }
+  return true;
+}
 
-        var inputNumber = $('#inputNumber').val();
-        var action = $(event.target.activeElement).attr('id');
-
-       
-        if (!inputNumber || inputNumber <= 0 || !Number.isInteger(Number(inputNumber))) {
-          $('#result').text('Masukkan angka positif yang valid.');
-          return;
-        }
-
-      
-        $.ajax({
-          url: 'backend.php',
-          type: 'POST',
-          data: {
-            action: action,
-            inputNumber: inputNumber
-          },
-          success: function(response) {
-            
-            $('#result').html(response);
-          },
-          error: function(xhr, status, error) {
-            console.log(xhr.responseText);
-            $('#result').text('Terjadi kesalahan. Silakan coba lagi.');
-          }
-        });
-      });
-    });
+function executeAction(action) {
+  var number = document.getElementById("numberInput").value;
+  
+  if (!validateNumber()) {
+    return;
+  }
+  
+  $.ajax({
+    url: "backend.php",
+    type: "POST",
+    data: { action: action, number: number },
+    success: function(response) {
+      $("#result").html(response);
+    },
+    error: function(xhr, status, error) {
+      console.error(error);
+    }
+  });
+}
   </script>
 </body>
 </html>
